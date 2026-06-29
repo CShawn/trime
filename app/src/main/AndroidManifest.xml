@@ -97,6 +97,17 @@ SPDX-License-Identifier: GPL-3.0-or-later
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
+        <activity
+            android:name=".ui.main.ZiYuanCodeActivity"
+            android:exported="true"
+            android:label="入库"
+            android:theme="@style/Theme.DialogTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
 
         <!-- All activities must be declared above <activity-alias> tag -->
     </application>
