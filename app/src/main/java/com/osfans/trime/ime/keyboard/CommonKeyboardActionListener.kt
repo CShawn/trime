@@ -298,7 +298,7 @@ class CommonKeyboardActionListener {
                 val index = arg.toIntOrNull() ?: return
                 rime.launchOnReady { api ->
                     service.lifecycleScope.launch {
-                        api.selectCandidate(index, false)
+                        api.selectCandidate(index, "",  false)
                     }
                 }
             }

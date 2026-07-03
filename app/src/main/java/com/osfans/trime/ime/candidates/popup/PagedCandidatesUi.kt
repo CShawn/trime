@@ -24,7 +24,7 @@ import splitties.views.dsl.recyclerview.recyclerView
 class PagedCandidatesUi(
     override val ctx: Context,
     val theme: Theme,
-    private val onCandidateClick: (Int) -> Unit,
+    private val onCandidateClick: (Int, String) -> Unit,
     private val onCandidateAction: (Int, String, View) -> Unit,
     private val onPrevPage: () -> Unit,
     private val onNextPage: () -> Unit,
@@ -88,7 +88,7 @@ class PagedCandidatesUi(
                         val candidate = item ?: return
                         holder.ui.update(candidate, position == menu.highlightedCandidateIndex)
                         holder.ui.root.setOnClickListener {
-                            onCandidateClick.invoke(position)
+                            onCandidateClick.invoke(position, candidate.text)
                         }
                         holder.ui.root.setOnLongClickListener { v ->
                             onCandidateAction.invoke(position, candidate.text, v)

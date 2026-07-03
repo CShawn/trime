@@ -126,7 +126,7 @@ abstract class BaseUnrolledCandidateWindow :
     fun bindCandidateUiViewHolder(holder: CandidateViewHolder) {
         holder.itemView.run {
             setOnClickListener { _ ->
-                rime.launchOnReady { it.selectCandidate(holder.idx, global = true) }
+                rime.launchOnReady { it.selectCandidate(holder.idx, holder.text, global = true) }
             }
             setOnLongClickListener { view ->
                 inputView.showCandidateActionMenu(holder.idx, holder.text, view, global = true)

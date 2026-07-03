@@ -92,7 +92,8 @@ class CompactCandidateDelegate : InputBroadcastReceiver {
     val adapter by lazy {
         CompactCandidateViewAdapter(theme).apply {
             setOnItemClickListener { _, _, position ->
-                rime.launchOnReady { it.selectCandidate(position, global = true) }
+                val str = items[position].text
+                rime.launchOnReady { it.selectCandidate(position, str, global = true) }
             }
             setOnItemLongClickListener { _, view, position ->
                 inputView.showCandidateActionMenu(position, items[position].text, view, global = true)

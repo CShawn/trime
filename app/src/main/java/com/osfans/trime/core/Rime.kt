@@ -20,6 +20,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileReader
 
 /**
  * Rime JNI and instance methods
@@ -132,8 +135,40 @@ class Rime :
         }.also { Timber.d("simulateKeySequence ${if (it) "success" else "failed"}") }
     }
 
-    override suspend fun selectCandidate(idx: Int, global: Boolean): Boolean = withRimeContext {
-        selectRimeCandidate(idx, global).also { emitResponse() }
+    override suspend fun selectCandidate(idx: Int, text: String, global: Boolean): Boolean = withRimeContext {
+        selectRimeCandidate(idx, global).also {
+            emitResponse(text)
+        }
+    }
+
+    private val dictFile = File(DataManager.defaultDataDir, "ziyuan_single.dict.yaml")
+    private val associations = mutableSetOf<String>()
+
+    private fun associate(text: String) {
+        associations.clear()
+        if (text.isEmpty()) {
+            return
+        }
+        FileReader(dictFile).use { reader ->
+            val bufferedReader = BufferedReader(reader)
+            var line = ""
+            while (bufferedReader.readLine()?.also { line = it } != null) {
+                if (associations.size > 10) break
+                if (line.length < 2) {
+                    continue
+                }
+                if (line.startsWith(text)) {
+                    line.split("\t").firstOrNull()?.takeIf { it != text }?.also {
+                        associations.add(it.substring(text.length))
+                    }
+                }
+            }
+        }
+        if (associations.isEmpty()) {
+            return
+        }
+        handleRimeMessage(RimeMessage.MessageType.Candidate.ordinal,
+            arrayOf(associations.size, 0, associations.map { CandidateItem(it) }.toTypedArray<CandidateItem>()))
     }
 
     override suspend fun deleteCandidate(idx: Int, global: Boolean): Boolean = withRimeContext {
@@ -233,9 +268,16 @@ class Rime :
         }
 
     private fun emitResponse(
+        text: String = "",
         commit: (() -> CommitProto) = { getRimeCommit() },
     ) {
-        handleRimeMessage(4, arrayOf(commit.invoke()))
+        var already = false
+        var typed = commit.invoke().text
+        if (typed == null && associations.contains(text)) {
+            typed = text
+            already = true
+        }
+        handleRimeMessage(4, arrayOf(CommitProto(typed)))
         val context = getRimeContext()
         handlePreedit(context.composition)
         if (context.composition.length <= 0 && lastAsciiTipsText != asciiTipsText) {
@@ -248,6 +290,7 @@ class Rime :
             handleRimeMessage(9, bulk)
         }
         handleRimeMessage(8, arrayOf(getRimeStatus()))
+        associate(if (already) "" else text)
     }
 
     private fun handlePreedit(composition: CompositionProto) {
