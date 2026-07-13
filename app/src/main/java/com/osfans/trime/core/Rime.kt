@@ -245,6 +245,9 @@ class Rime :
     private fun processKeyInner(value: Int, modifiers: Int, isVirtual: Boolean): Boolean {
         lastAsciiTipsText = asciiTipsText
         val handled = if (associations.isNotEmpty() && (value == RimeKey_BackSpace || value == RimeKey_space)) {
+            if (value == RimeKey_space) {
+                handleRimeMessage(4, arrayOf(CommitProto(associations.first())))
+            }
             true
         } else processRimeKey(value, modifiers)
         emitResponse()
