@@ -6,6 +6,8 @@
 package com.osfans.trime.core
 
 import com.osfans.trime.BuildConfig
+import com.osfans.trime.core.RimeKeyMapping.RimeKey_BackSpace
+import com.osfans.trime.core.RimeKeyMapping.RimeKey_space
 import com.osfans.trime.data.base.DataManager
 import com.osfans.trime.data.opencc.OpenCCDictManager
 import com.osfans.trime.data.prefs.AppPrefs
@@ -242,7 +244,9 @@ class Rime :
 
     private fun processKeyInner(value: Int, modifiers: Int, isVirtual: Boolean): Boolean {
         lastAsciiTipsText = asciiTipsText
-        val handled = processRimeKey(value, modifiers)
+        val handled = if (associations.isNotEmpty() && (value == RimeKey_BackSpace || value == RimeKey_space)) {
+            true
+        } else processRimeKey(value, modifiers)
         emitResponse()
         if (!handled) {
             handleRimeMessage(
