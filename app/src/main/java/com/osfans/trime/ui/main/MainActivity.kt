@@ -9,6 +9,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -106,7 +108,17 @@ class MainActivity : AppCompatActivity() {
                     ""
                 }
         }
-
+        val et = findViewById<EditText>(R.id.et_input)
+        findViewById<ImageButton>(R.id.ib_save).setOnClickListener {
+            if (et.text.isEmpty()) {
+                return@setOnClickListener
+            }
+            startActivity(Intent(baseContext, ZiYuanCodeActivity::class.java).apply {
+                action = Intent.ACTION_PROCESS_TEXT
+                type = "text/plain"
+                putExtra(Intent.EXTRA_PROCESS_TEXT, et.text)
+            })
+        }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         processIntent(intent)
         checkNotificationPermission()

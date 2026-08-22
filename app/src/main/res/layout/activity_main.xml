@@ -12,7 +12,27 @@
     android:layout_height="match_parent">
 
     <include android:id="@+id/mainToolbar" layout="@layout/toolbar" />
-
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/et_input"
+            android:inputType="text"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:layout_height="wrap_content"/>
+        <ImageButton
+            android:id="@+id/ib_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:background="@color/colorPrimary"
+            android:src="@android:drawable/ic_menu_save"/>
+    </LinearLayout>
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
